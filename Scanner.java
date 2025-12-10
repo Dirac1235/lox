@@ -189,7 +189,8 @@ public class Scanner {
 
   private void addToken(TokenType type, Object literal) {
     String text = source.substring(start, current);
-    tokens.add(new Token(type, text, null, line));
+    Token tkn = new Token(type, text, literal, line);
+    tokens.add(tkn);
   }
 
   private boolean isAtEnd() {
