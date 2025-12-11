@@ -19,7 +19,9 @@ public class GenerateAst {
         "Literal : Object value",
         "Unary : Token operator, Expr right");
     try {
-      defineAst(outputDir, "Expr", types);
+      defineAst(outputDir, "Stmt", Arrays.asList(
+          "Expression : Expr expression",
+          "Print : Expr expression"));
 
     } catch (Exception e) {
       // TODO: handle exception
@@ -66,7 +68,7 @@ public class GenerateAst {
     writer.println("      return visitor.visit" +
         className + baseName + "(this);");
     writer.println("    }");
-      
+
     // Fields.
     writer.println();
     for (String field : fields) {

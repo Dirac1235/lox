@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 class Parser {
@@ -11,12 +12,28 @@ class Parser {
     this.tokens = tokens;
   }
 
-  Expr parse() {
-    try {
-      return expression();
-    } catch (ParseError error) {
-      return null;
+  List<Stmt> parse() {
+    List<Stmt> statements = new ArrayList<>();
+    while (!isAtEnd()) {
+      statements.add(statement());
     }
+    return statements;
+  }
+
+  private Stmt statement() {
+    if (match(TokenType.PRINT)) return printStatement();
+    return expressionStatement();
+  }
+
+  private Stmt printStatement() {
+    Expr value = expression();
+    consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return new Stmt.Print(value);
+  }
+  private Stmt expressionStatement() {
+    Expr value = expression();
+    consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return new Stmt.Expression(value);
   }
 
   private Expr expression() {
@@ -81,7 +98,7 @@ class Parser {
     if (match(TokenType.NIL))
       return new Expr.Literal(null);
     if (match(TokenType.NUMBER, TokenType.STRING)) {
-      Object obj = previous().literal;  // returns nil because it is literal the values are in the lexemes    
+      Object obj = previous().literal; // returns nil because it is literal the values are in the lexemes
       return new Expr.Literal(obj);
     }
     if (match(TokenType.LEFT_PAREN)) {
