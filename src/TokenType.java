@@ -1,3 +1,4 @@
+package src;
 enum TokenType {
   // Single-character tokens.
   LEFT_PAREN, 

@@ -1,9 +1,11 @@
-package tool;
+package src.tool;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GenerateAst {
   public static void main(String[] args) {
@@ -13,16 +15,27 @@ public class GenerateAst {
       System.exit(64);
     }
     String outputDir = args[0];
-    List<String> types = Arrays.asList(
+    List<String> expr_types = Arrays.asList(
+        "Assign : Token name, Expr value",
         "Binary : Expr left, Token operator, Expr right",
         "Grouping : Expr expression",
         "Literal : Object value",
-        "Unary : Token operator, Expr right");
+        "Logical : Expr left, Token operator, Expr right",
+        "Unary : Token operator, Expr right",
+        "Variable : Token name");
+    List<String> stmt_types = Arrays.asList(
+        "Expression : Expr expression",
+        "If : Expr condition, Stmt thenBranch," +
+            " Stmt elseBranch",
+        "Print : Expr expression",
+        "Var : Token name, Expr initializer");
+    Map<String, List<String>> output = new HashMap<String, List<String>>();
+    output.put("Stmt", stmt_types);
+    output.put("Expr", expr_types);
     try {
-      defineAst(outputDir, "Stmt", Arrays.asList(
-          "Expression : Expr expression",
-          "Print : Expr expression"));
-
+      for (String baseName : output.keySet()) {
+        defineAst(outputDir, baseName, output.get(baseName));
+      }
     } catch (Exception e) {
       // TODO: handle exception
     }
@@ -34,8 +47,6 @@ public class GenerateAst {
 
     // writer.println("package com.craftinginterpreters.lox;");
     // writer.println();
-    writer.println("import java.util.List;");
-    writer.println();
     writer.println("abstract class " + baseName + " {");
     defineVisitor(writer, baseName, types);
     for (String type : types) {
