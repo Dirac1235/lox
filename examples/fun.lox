@@ -1,0 +1,4 @@
+fun test(t) {
+  print(t);
+}
+ test(2);
