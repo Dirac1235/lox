@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class GenerateAst {
   public static void main(String[] args) {
+    ;
 
     if (args.length != 1) {
       System.err.println("Usage: generate_ast <output directory>");
@@ -18,6 +19,7 @@ public class GenerateAst {
     List<String> expr_types = Arrays.asList(
         "Assign : Token name, Expr value",
         "Binary : Expr left, Token operator, Expr right",
+        "Call   : Expr callee, Token paren, List<Expr> arguments",
         "Grouping : Expr expression",
         "Literal : Object value",
         "Logical : Expr left, Token operator, Expr right",
@@ -25,10 +27,15 @@ public class GenerateAst {
         "Variable : Token name");
     List<String> stmt_types = Arrays.asList(
         "Expression : Expr expression",
+        "Function : Token name, List<Token> params," +
+            " List<Stmt> body",
         "If : Expr condition, Stmt thenBranch," +
             " Stmt elseBranch",
         "Print : Expr expression",
-        "Var : Token name, Expr initializer");
+        "Return : Token keyword, Expr value",
+        "Block : List<Stmt> statements",
+        "Var : Token name, Expr initializer",
+        "While : Expr condition, Stmt body");
     Map<String, List<String>> output = new HashMap<String, List<String>>();
     output.put("Stmt", stmt_types);
     output.put("Expr", expr_types);
@@ -47,6 +54,8 @@ public class GenerateAst {
 
     // writer.println("package com.craftinginterpreters.lox;");
     // writer.println();
+    writer.println("package src;\n" + //
+        "import java.util.List;");
     writer.println("abstract class " + baseName + " {");
     defineVisitor(writer, baseName, types);
     for (String type : types) {
